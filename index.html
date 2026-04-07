@@ -7,6 +7,116 @@
   <meta name="description" content="Portfolio of Abhinav Gautam, Software Engineer.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2309090b' width='100' height='100' rx='20'/><text y='.9em' x='50%' text-anchor='middle' font-size='70' fill='white'>A</text></svg>">
   <style>
+    /* Splash Screen */
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .splash-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .splash-text {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .name-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Skills Terminal */
+    .terminal-container {
+      background: #000000;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #00ff41;
+      max-height: calc(100vh - 350px);
+      min-height: 300px;
+      width: 100%;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .terminal-output {
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .terminal-input-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .terminal-prompt {
+      color: #00ff41;
+      white-space: nowrap;
+    }
+
+    .terminal-input {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      flex: 1;
+      outline: none;
+      caret-color: #00ff41;
+    }
+
+    .terminal-command-result {
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .terminal-error {
+      color: #ff4b2b;
+    }
+
+    .terminal-help {
+      color: #3b82f6;
+    }
+
+    .terminal-category {
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 8px;
+      display: block;
+    }
+
+    .skill-list-item {
+      display: inline-block;
+      margin-right: 12px;
+      color: #fafafa;
+    }
+
+    @media (max-width: 480px) {
+      .terminal-container {
+        max-height: calc(100vh - 250px);
+      }
+    }
     *, *::before, *::after {
       margin: 0;
       padding: 0;
@@ -428,13 +538,18 @@
       display: block;
     }
 
-    #projects.tab-content.active {
+    #projects.tab-content.active,
+    #ctf.tab-content.active,
+    #skills.tab-content.active {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       overflow-y: auto;
     }
 
+    #skills.tab-content.active {
+      overflow-y: hidden;
+    }
     /* Projects */
     .projects-grid {
       display: flex;
@@ -442,65 +557,13 @@
       gap: 12px;
       width: 100%;
       min-height: 100%;
-      justify-content: center;
-    }
-
-    .projects-coming-soon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      width: 100%;
-    }
-
-    .ascii-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .ascii-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      transform: translate(-12px, 22px);
-    }
-
-    .ascii-art {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.22;
-      white-space: pre;
-      text-align: center;
-      opacity: 0.86;
-      transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease;
-      cursor: default;
-      text-shadow: 0 0 18px rgba(74, 222, 128, 0.08);
-    }
-
-    .ascii-wrapper:hover .ascii-art {
-      opacity: 1;
-      color: var(--accent);
-      animation: asciiGlow 2.5s ease-in-out infinite;
-      transform: translateY(-1px);
-    }
-
-    @keyframes asciiGlow {
-      0%, 100% { text-shadow: 0 0 2px rgba(34, 197, 94, 0.15); }
-      50% { text-shadow: 0 0 6px rgba(34, 197, 94, 0.35), 0 0 12px rgba(34, 197, 94, 0.12); }
+      justify-content: flex-start;
     }
 
     .project-card {
       transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
       cursor: pointer;
       padding: 16px;
-      margin: -16px;
       border-radius: 12px;
       border: 1px solid transparent;
     }
@@ -587,94 +650,6 @@
 
     .project-tags span:not(:last-child)::after {
       content: ' /';
-    }
-
-    /* Skills */
-    .skills-intro {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .skills-container {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .skill-category-title {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .skill-category + .skill-category {
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .skill-category-title .count {
-      font-size: 10px;
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    .skills-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .skill-tag {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      padding: 8px 14px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-      cursor: default;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      line-height: 1;
-    }
-
-    .skill-tag:hover {
-      transform: translateY(-1px);
-      color: var(--text-soft);
-      border-color: rgba(74, 222, 128, 0.2);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .skill-tag svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      opacity: 0.5;
-      transition: all 0.2s ease;
-    }
-
-    .skill-tag:hover svg {
-      opacity: 1;
-    }
-
-    .skill-tag:hover[class*="skill-"] {
-      background: var(--accent-soft);
-      color: var(--text);
-      border-color: rgba(74, 222, 128, 0.25);
-    }
-
-    .skill-tag:hover[class*="skill-"] svg {
-      fill: var(--accent);
     }
 
     /* Footer */
@@ -786,6 +761,14 @@
   </style>
 </head>
 <body>
+  <div class="splash-screen">
+    <div class="splash-text">
+      <div class="name-container">
+        <span id="typed-name"></span>
+      </div>
+      <span id="fade-in-title" style="opacity: 0; transition: opacity 0.5s ease-in; margin-top: 8px; font-size: 18px; color: var(--text-muted);">Software Engineer</span>
+    </div>
+  </div>
   <div class="container">
     <main>
       <!-- Hero -->
@@ -835,512 +818,127 @@
       <div class="tabs">
         <div class="tab-list animate-in delay-3" role="tablist">
           <button class="tab-btn active" role="tab" data-tab="projects" aria-selected="true">Projects</button>
+          <button class="tab-btn" role="tab" data-tab="ctf" aria-selected="false">CTF</button>
           <button class="tab-btn" role="tab" data-tab="skills" aria-selected="false">Skills</button>
         </div>
 
         <!-- Projects Tab -->
         <div class="tab-content active" id="projects" role="tabpanel">
           <div class="projects-grid">
-            <!--
             <article class="project-card">
               <div class="project-header">
                 <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">E-Commerce Platform</a>
+                  <a href="https://socratic-ai-web-one.vercel.app/" target="_blank" rel="noopener">Socratic AI</a>
                   <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                     <polyline points="15 3 21 3 21 9"/>
                     <line x1="10" y1="14" x2="21" y2="3"/>
                   </svg>
                 </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
+                <a href="https://github.com/salluexez/Socratic_AI" class="project-link" target="_blank" rel="noopener">github.com</a>
               </div>
-              <p class="project-desc">A full-featured e-commerce platform with payment integration, inventory management, and analytics dashboard.</p>
-              <div class="project-tags">
-                <span>React</span>
-                <span>Node.js</span>
-                <span>MongoDB</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">Task Management App</a>
-                  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
-              </div>
-              <p class="project-desc">Collaborative task management with real-time updates, drag-and-drop kanban boards, and team collaboration features.</p>
+              <p class="project-desc">Intelligent AI tutor for complex problem solving and educational assistance.</p>
               <div class="project-tags">
                 <span>Next.js</span>
                 <span>TypeScript</span>
-                <span>PostgreSQL</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">Weather Dashboard</a>
-                  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
-              </div>
-              <p class="project-desc">Beautiful weather dashboard with 7-day forecasts, interactive maps, and location-based alerts.</p>
-              <div class="project-tags">
-                <span>Vue.js</span>
-                <span>API Integration</span>
-                <span>Chart.js</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">AI Content Generator</a>
-                  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
-              </div>
-              <p class="project-desc">AI-powered content generation tool with SEO optimization, plagiarism checking, and multi-language support.</p>
-              <div class="project-tags">
-                <span>Python</span>
                 <span>OpenAI</span>
-                <span>FastAPI</span>
               </div>
             </article>
+          </div>
+        </div>
 
+        <!-- CTF Tab -->
+        <div class="tab-content" id="ctf" role="tabpanel">
+          <div class="projects-grid">
             <article class="project-card">
               <div class="project-header">
                 <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">Fitness Tracker</a>
+                  <a href="https://www.linkedin.com/posts/abhinavgautam01_ctf-certificate-activity-7394048942419914754-AAqf?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" target="_blank" rel="noopener">Razzify CTF</a>
                   <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                     <polyline points="15 3 21 3 21 9"/>
                     <line x1="10" y1="14" x2="21" y2="3"/>
                   </svg>
                 </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
+                <a href="https://www.linkedin.com/posts/abhinavgautam01_ctf-certificate-activity-7394048942419914754-AAqf?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" class="project-link" target="_blank" rel="noopener">linkedin.com</a>
               </div>
-              <p class="project-desc">Mobile-first fitness tracking app with workout plans, nutrition logging, and progress analytics.</p>
+              <p class="project-desc">Participation and achievement in Razzify Capture The Flag competition.</p>
               <div class="project-tags">
-                <span>React Native</span>
-                <span>Firebase</span>
-                <span>Redux</span>
+                <span>Cybersecurity</span>
+                <span>CTF</span>
               </div>
             </article>
 
             <article class="project-card">
               <div class="project-header">
                 <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">Real-time Chat App</a>
+                  <a href="https://www.linkedin.com/posts/sourav-danyal-a8b35232a_cybersecurity-ctf-capturetheflag-activity-7439192711909249024-XBKS?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" target="_blank" rel="noopener">Dark CTF</a>
                   <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                     <polyline points="15 3 21 3 21 9"/>
                     <line x1="10" y1="14" x2="21" y2="3"/>
                   </svg>
                 </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
+                <a href="https://www.linkedin.com/posts/sourav-danyal-a8b35232a_cybersecurity-ctf-capturetheflag-activity-7439192711909249024-XBKS?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" class="project-link" target="_blank" rel="noopener">linkedin.com</a>
               </div>
-              <p class="project-desc">End-to-end encrypted messaging app with video calls, file sharing, and group channels.</p>
+              <p class="project-desc">Organized by CrackOn Community and HackCulture.</p>
               <div class="project-tags">
-                <span>Socket.io</span>
-                <span>WebRTC</span>
-                <span>Express</span>
+                <span>Cybersecurity</span>
+                <span>CTF</span>
               </div>
             </article>
 
             <article class="project-card">
               <div class="project-header">
                 <h3 class="project-title">
-                  <a href="#" target="_blank" rel="noopener">Crypto Portfolio Tracker</a>
+                  <a href="https://www.linkedin.com/posts/ritikchouhan251107_cybersecurity-ctf-ethicalhacking-activity-7441395716616343554-5IJC?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" target="_blank" rel="noopener">REDFOX 2026 CTF</a>
                   <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                     <polyline points="15 3 21 3 21 9"/>
                     <line x1="10" y1="14" x2="21" y2="3"/>
                   </svg>
                 </h3>
-                <a href="#" class="project-link" target="_blank" rel="noopener">github.com</a>
+                <a href="https://www.linkedin.com/posts/ritikchouhan251107_cybersecurity-ctf-ethicalhacking-activity-7441395716616343554-5IJC?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" class="project-link" target="_blank" rel="noopener">linkedin.com</a>
               </div>
-              <p class="project-desc">Cryptocurrency portfolio tracker with real-time prices, alerts, and portfolio performance analytics.</p>
+              <p class="project-desc">International Capture The Flag competition.</p>
               <div class="project-tags">
-                <span>React</span>
-                <span>Web3.js</span>
-                <span>Chart.js</span>
+                <span>International</span>
+                <span>Cybersecurity</span>
+                <span>CTF</span>
               </div>
             </article>
-            -->
 
-            <div class="projects-coming-soon">
-              <div class="ascii-wrapper">
-                <div class="ascii-row">
-                  <pre class="ascii-art">
-      .-----------------------------------------------------.
-      |  PROJECTS PANEL :: CURRENTLY UNDER CONSTRUCTION     |
-      |-----------------------------------------------------|
-      |                                                     |
-      |      Projects and live demos will appear here.      |
-      |                                                     |
-      |            status: work in progress                 |
-      |                                                     |
-      '-----------------------------------------------------'
-                  </pre>
-                </div>
+            <article class="project-card">
+              <div class="project-header">
+                <h3 class="project-title">
+                  <a href="https://www.linkedin.com/posts/activity-7443270035684388864-y8K1?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" target="_blank" rel="noopener">Stranger's CTF</a>
+                  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                </h3>
+                <a href="https://www.linkedin.com/posts/activity-7443270035684388864-y8K1?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFIipbcBNFrNmt6mu1tGEW5gJibavTuGPbM" class="project-link" target="_blank" rel="noopener">linkedin.com</a>
               </div>
-            </div>
+              <p class="project-desc">International Capture The Flag competition.</p>
+              <div class="project-tags">
+                <span>International</span>
+                <span>Cybersecurity</span>
+                <span>CTF</span>
+              </div>
+            </article>
           </div>
         </div>
 
         <!-- Skills Tab -->
         <div class="tab-content" id="skills" role="tabpanel">
-          <p class="skills-intro">Technologies and tools I work with.</p>
-          <div class="skills-container">
-            <div class="skill-category">
-              <h4 class="skill-category-title">Frontend <span class="count">12</span></h4>
-              <div class="skills-grid">
-                <span class="skill-tag skill-react">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.31 0-.592.068-.852.2-1.56.793-1.554 4.203.364 7.489C3.5 10.073 1.67 11.545 1.67 13.08c0 1.612 1.95 3.145 5.181 4.12-.591 3.006-.187 5.382 1.152 6.065.26.132.542.2.852.2 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.31 0 .592-.068.852-.2 1.56-.794 1.554-4.205-.364-7.489 3.116-1.048 4.796-2.52 4.796-4.058 0-1.612-1.95-3.145-5.18-4.12.59-3.006.187-5.383-1.152-6.066a1.807 1.807 0 0 0-.852-.2zm.068 1.326c.2 0 .36.042.49.112.76.387.97 2.262.555 4.678a26.263 26.263 0 0 0-.464 1.69c-1.061-.253-2.26-.42-3.536-.492a26.08 26.08 0 0 0-1.28-2.01c1.63-1.493 3.104-2.345 4.235-2.986zm-9.876.292c1.113.634 2.572 1.475 4.186 2.948a24.79 24.79 0 0 0-2.88 1.87c-1.388-.818-2.34-1.76-2.862-2.797.303-1.002.903-1.792 1.556-2.02zm-3.38 3.76c.48.944 1.388 1.818 2.72 2.596a24.088 24.088 0 0 0-.294 3.52c-1.518-.39-2.576-1.076-3.046-1.93-.282-.51-.356-1.064-.212-1.612.18-.68.572-1.272 1.09-1.716l-.258-.858zm1.952 8.486c-1.174.635-2.504.96-3.846.872.136-.662.442-1.32.948-1.918.47-.56 1.08-1.026 1.76-1.362a23.9 23.9 0 0 0 1.138 2.408zm9.78-.004a24.622 24.622 0 0 0 1.156-2.418 6.69 6.69 0 0 1 1.744 1.356c.507.594.81 1.255.946 1.917-1.34.094-2.672-.234-3.846-.852v.002zm4.196-2.626c-.338.87-1.032 1.714-2.01 2.436a24.18 24.18 0 0 0 .294-3.52c1.518.39 2.576 1.076 3.046 1.93.282.51.356 1.064.212 1.612-.18.68-.572 1.272-1.09 1.716l.258.858a6.66 6.66 0 0 1-.258-.858c-.064-.17-.14-.34-.252-.502v-.002l-.2-.476v.27zm-1.42-7.874c.464 1.038 1.416 1.98 2.804 2.798a23.896 23.896 0 0 0-2.88-1.87c1.061.252 2.26.42 3.536.492a26.273 26.273 0 0 0-1.28 2.01c-1.63-1.493-3.104-2.345-4.235-2.986.2-.07.36-.112.49-.112a2.3 2.3 0 0 1 1.565.668v-.002zm-3.496-.35c.788-.354 1.576-.57 2.312-.642a25.318 25.318 0 0 0-.004 4.296 6.68 6.68 0 0 1-2.308-3.654zm4.628-.004a25.24 25.24 0 0 0-.004-4.296c.736.072 1.524.288 2.312.642a6.68 6.68 0 0 1-2.308 3.654z"/>
-                  </svg>
-                  React
-                </span>
-                <span class="skill-tag skill-nextjs">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.25 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10513.38 10513.38 0 0 0 4.735 7.17l1.9 2.878.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.86-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.572 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 0 1 .237.277c.018.06.023 1.365.018 4.304l-.006 4.218-.744-1.14-.746-1.14v-3.066c0-1.982.01-3.097.023-3.15a.478.478 0 0 1 .233-.296c.096-.05.13-.054.5-.054z"/>
-                  </svg>
-                  Next.js
-                </span>
-                <span class="skill-tag skill-vue">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 1.61h-9.94L12 5.16 9.94 1.61H0l12 20.78zM12 14.08L5.16 2.23h4.43L12 6.41l2.41-4.18h4.43z"/>
-                  </svg>
-                  Vue.js
-                </span>
-                <span class="skill-tag skill-typescript">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.394c.272.118.575.236.908.352.332.116.663.243.993.382.33.138.648.303.952.495.304.191.562.414.771.668.209.253.366.547.47.88.104.332.156.714.156 1.145 0 .636-.117 1.195-.35 1.678-.235.483-.56.89-.976 1.223-.417.333-.897.588-1.442.767-.546.179-1.117.268-1.713.268-.596 0-1.165-.09-1.71-.27a4.585 4.585 0 0 1-1.428-.772 5.144 5.144 0 0 1-.966-1.24l2.232-1.396c.132.26.318.484.558.67.24.187.504.338.79.453.287.115.578.172.875.172.313 0 .596-.036.85-.108a1.95 1.95 0 0 0 .62-.297c.172-.133.3-.3.393-.5a1.09 1.09 0 0 0 .139-.59c0-.225-.064-.42-.192-.588-.128-.167-.312-.318-.55-.453-.237-.135-.525-.265-.863-.392-.338-.128-.694-.263-1.068-.406-.373-.143-.74-.309-1.1-.499a4.496 4.496 0 0 1-.932-.66 3.22 3.22 0 0 1-.656-.848 2.89 2.89 0 0 1-.39-.96c-.089-.34-.133-.707-.133-1.101 0-.59.122-1.124.365-1.602.243-.478.58-.883 1.009-1.214.429-.332.918-.588 1.466-.767.549-.18 1.115-.27 1.699-.27zm-5.368 5.898v6.72h-2.428v-6.72H7.242V7.36h7.275v2.248h-2.428z"/>
-                  </svg>
-                  TypeScript
-                </span>
-                <span class="skill-tag skill-javascript">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
-                  </svg>
-                  JavaScript
-                </span>
-                <span class="skill-tag skill-tailwind">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"/>
-                  </svg>
-                  Tailwind
-                </span>
-                <span class="skill-tag skill-redux">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.506 8.07a.5.5 0 0 0-.49.617 9.506 9.506 0 0 0 5.034 5.893.5.5 0 0 0 .523-.085L12 8.972a.5.5 0 0 0 0-.69L6.573 2.755a.5.5 0 0 0-.523-.085A9.506 9.506 0 0 0 1.016 8.557a.5.5 0 0 0 .49-.487zm8.824-3.19A.5.5 0 0 0 9.84 4.263 6.453 6.453 0 0 0 6.49 8.07a6.453 6.453 0 0 0 3.35 3.807.5.5 0 0 0 .49-.617 5.453 5.453 0 0 1-2.85-3.19 5.453 5.453 0 0 1 2.85-3.19zM22.494 15.93a.5.5 0 0 0 .49-.617 9.506 9.506 0 0 0-5.034-5.893.5.5 0 0 0-.523.085L12 15.028a.5.5 0 0 0 0 .69l5.427 5.527a.5.5 0 0 0 .523.085 9.506 9.506 0 0 0 4.544-5.4zM14.176 4.87a.5.5 0 0 0 .49-.617 6.453 6.453 0 0 0-3.35-3.807.5.5 0 0 0-.49.617 5.453 5.453 0 0 1 2.85 3.19 5.453 5.453 0 0 1-.5 2.614zm-8.352 14.26a.5.5 0 0 0 .49.617 9.506 9.506 0 0 0 5.034-5.893.5.5 0 0 0-.523-.085L12 19.088a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 0-.851-.359l-5.427 5.527a.5.5 0 0 0-.098.123 9.506 9.506 0 0 0 2.5 8.261z"/>
-                  </svg>
-                  Redux
-                </span>
-                <span class="skill-tag skill-html">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/>
-                  </svg>
-                  HTML
-                </span>
-                <span class="skill-tag skill-css">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.413z"/>
-                  </svg>
-                  CSS
-                </span>
-                <span class="skill-tag skill-sass">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6.157 17.553c-.14 1.28-.753 2.348-1.81 3.11-1.057.762-2.363 1.143-3.917 1.143-1.09 0-2.097-.177-3.023-.53-.926-.353-1.714-.847-2.362-1.48-.648-.633-1.153-1.388-1.515-2.264-.362-.877-.543-1.837-.543-2.88 0-1.043.18-2.003.54-2.88.36-.877.863-1.632 1.51-2.265.647-.633 1.432-1.127 2.353-1.48.92-.353 1.922-.53 3.007-.53 1.563 0 2.874.38 3.933 1.143 1.058.762 1.67 1.828 1.835 3.198.035.283-.168.548-.454.576l-1.017.098c-.253.025-.49-.155-.524-.406-.206-1.1-.69-1.864-1.453-2.29-.763-.428-1.778-.642-3.046-.642-.9 0-1.693.153-2.38.46-.686.306-1.25.728-1.69 1.265-.44.537-.77 1.17-.99 1.897-.22.727-.33 1.514-.33 2.36 0 .846.11 1.633.33 2.36.22.727.55 1.36.99 1.897.44.537 1.004.96 1.69 1.265.687.307 1.48.46 2.38.46 1.278 0 2.297-.218 3.057-.654.76-.436 1.24-1.204 1.438-2.303.035-.25.268-.428.524-.406l1.017.098c.286.028.49.293.454.576z"/>
-                  </svg>
-                  Sass
-                </span>
-                <span class="skill-tag skill-svelte">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M21.85 13.68c-1.933 3.487-5.667 5.553-9.647 5.553-2.227 0-4.407-.66-6.21-1.93l-.117-.084-.12-.082a.474.474 0 0 1 .373-.834l.003.002.015-.002a.474.474 0 0 1 .36.168l.004.003.012.01a7.56 7.56 0 0 0 5.685 1.76c3.39 0 6.474-1.982 7.912-5.07a.474.474 0 0 1 .844.462v.002l.002.002zm-1.396-2.58a.474.474 0 0 1-.645.137l-.004-.002-.008-.005a7.56 7.56 0 0 0-5.676-1.756c-3.39 0-6.473 1.982-7.91 5.07a.474.474 0 0 1-.845-.462C3.6 11.11 6.333 9.043 10.313 9.043c2.227 0 4.408.66 6.21 1.93l.118.084.12.082a.474.474 0 0 1 .07.678l-.002-.003zm-4.28-2.75c-1.212 0-2.374.347-3.356.996a.474.474 0 1 1-.51-.807A7.499 7.499 0 0 1 16.173 7.04a7.499 7.499 0 0 1 3.357.997.474.474 0 1 1-.51.807 6.556 6.556 0 0 0-3.646-.494z"/>
-                  </svg>
-                  Svelte
-                </span>
-                <span class="skill-tag skill-vite">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8.286 10.578l-.432-1.237L2.17.002h5.663l3.103 9.193L6.188 13.5l-3.8-7.305L8.286 10.578zm-.6 5.646l1.92-3.34L15.63 2.33h3.2l-5.2 13.894h-3.14l.196-.001zm2.314 1.242L12 24l3.5-6.5h3.999L12 24l-4-6.634h3.6l-.6 1.6z"/>
-                  </svg>
-                  Vite
-                </span>
-              </div>
-            </div>
-
-            <div class="skill-category">
-              <h4 class="skill-category-title">Backend <span class="count">12</span></h4>
-              <div class="skills-grid">
-                <span class="skill-tag skill-nodejs">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.998 24c-.321 0-.641-.084-.922-.247L8.14 22.016c-.438-.245-.224-.332-.08-.383.585-.203.703-.25 1.328-.604.066-.037.152-.023.22.017l2.255 1.339c.082.045.198.045.275 0l8.795-5.076c.082-.047.134-.141.134-.242V7.115c0-.104-.053-.198-.137-.242l-8.791-5.072c-.081-.047-.189-.047-.271 0L3.075 6.873c-.085.045-.139.139-.139.243v10.15c0 .101.054.195.137.24l2.409 1.392c1.307.654 2.108-.116 2.108-.89V7.769c0-.142.114-.253.254-.253h1.111c.139 0 .253.112.253.253v10.021c0 1.745-.95 2.745-2.604 2.745-.509 0-.909 0-2.026-.551L2.28 18.675c-.57-.329-.922-.943-.922-1.604V7.115c0-.659.353-1.275.922-1.603l8.795-5.082c.557-.315 1.296-.315 1.848 0l8.794 5.082c.57.329.924.944.924 1.603v9.956c0 .659-.354 1.273-.924 1.604l-8.794 5.078c-.28.163-.6.247-.925.247zm2.722-6.969c-3.857 0-4.664-1.771-4.664-3.256 0-.141.114-.253.254-.253h1.136c.127 0 .233.093.251.218.172 1.161.686 1.746 3.023 1.746 1.857 0 2.646-.42 2.646-1.404 0-.566-.223-.986-3.109-1.268-2.412-.239-3.904-.771-3.904-2.7 0-1.777 1.498-2.837 4.007-2.837 2.818 0 4.212.978 4.389 3.077.006.074-.021.146-.068.202-.047.054-.116.085-.187.085h-1.137c-.122 0-.229-.086-.25-.204-.28-1.237-.955-1.638-2.747-1.638-2.024 0-2.256.705-2.256 1.229 0 .642.277.83 3.014 1.188 2.712.352 4.002.855 4.002 2.772 0 1.916-1.596 2.951-4.389 2.951z"/>
-                  </svg>
-                  Node.js
-                </span>
-                <span class="skill-tag skill-python">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09-.33.22zM21.1 6.11l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08-.33.23z"/>
-                  </svg>
-                  Python
-                </span>
-                <span class="skill-tag skill-fastapi">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.6 16.4h-3.2c-.4 0-.8-.4-.8-.8v-7.2c0-.4.4-.8.8-.8h3.2c.4 0 .8.4.8.8v7.2c0 .4-.4.8-.8.8zm-11.2 0H3.2c-.4 0-.8-.4-.8-.8v-7.2c0-.4.4-.8.8-.8h3.2c.4 0 .8.4.8.8v7.2c0 .4-.4.8-.8.8z"/>
-                  </svg>
-                  FastAPI
-                </span>
-                <span class="skill-tag skill-postgresql">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.557 14.945c-.329-.773-.686-1.512-1.072-2.214a10.273 10.273 0 0 0-1.52-2.287 9.167 9.167 0 0 0-2.154-1.863 8.494 8.494 0 0 0-2.61-1.193A8.923 8.923 0 0 0 12 6.553c-1.134 0-2.203.16-3.199.47a8.494 8.494 0 0 0-2.61 1.193 9.167 9.167 0 0 0-2.154 1.863 10.273 10.273 0 0 0-1.52 2.287c-.386.702-.743 1.441-1.072 2.214A9.613 9.613 0 0 0 .42 18.57a10.04 10.04 0 0 0-.42 2.973c0 .99.088 1.94.263 2.849.174.908.422 1.758.744 2.55.322.792.718 1.51 1.188 2.152.47.642 1.017 1.19 1.641 1.642.624.453 1.322.814 2.094 1.083.772.269 1.62.453 2.545.552.924.1 1.914.12 2.967.06a29.35 29.35 0 0 0 3.023-.293c.978-.152 1.886-.38 2.724-.684a7.608 7.608 0 0 0 2.308-1.248c.66-.532 1.227-1.152 1.7-1.86a7.232 7.232 0 0 0 1.024-2.232c.25-.826.398-1.71.446-2.652.048-.942-.008-1.92-.168-2.936-.16-1.016-.42-2.056-.78-3.12zM12 20.963c-1.722 0-3.235-.617-4.16-1.544-.796-.8-1.235-1.87-1.235-2.977 0-1.106.44-2.177 1.235-2.977.925-.927 2.438-1.544 4.16-1.544 1.722 0 3.235.617 4.16 1.544.796.8 1.235 1.87 1.235 2.977 0 1.106-.44 2.177-1.235 2.977-.925.927-2.438 1.544-4.16 1.544z"/>
-                  </svg>
-                  PostgreSQL
-                </span>
-                <span class="skill-tag skill-mongodb">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.193 9.555c-1.264-5.58-4.252-7.414-4.573-8.115-.28-.394-.53-.954-.735-1.44-.036.495-.055.685-.523 1.184-.723.566-4.438 3.682-4.74 10.02-.282 5.912 4.27 9.435 4.888 9.884l.07.05A73.49 73.49 0 0 1 8.86 24h.024c.754 0 1.575-.084 2.44-.258l.08-.024c.403-.128.816-.288 1.24-.472.845-.368 1.76-.88 2.688-1.535.136-.097.27-.195.4-.296.66-.5 1.34-1.1 2.02-1.8.34-.35.67-.71.99-1.086.16-.187.315-.378.465-.572.6-.776 1.14-1.628 1.59-2.53.18-.36.345-.728.495-1.1.3-.74.53-1.512.69-2.295.08-.39.14-.785.18-1.18l.016-.17c.03-.318.05-.638.05-.957 0-.36-.02-.72-.065-1.076-.09-.71-.24-1.412-.45-2.096-.42-1.37-1.06-2.644-1.9-3.75-.09-.118-.18-.234-.275-.348-.19-.23-.39-.45-.6-.66zm-3.19 11.216c-2.607 0-4.72-2.113-4.72-4.72 0-2.607 2.113-4.72 4.72-4.72 2.607 0 4.72 2.113 4.72 4.72 0 2.607-2.113 4.72-4.72 4.72z"/>
-                  </svg>
-                  MongoDB
-                </span>
-                <span class="skill-tag skill-redis">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M10.478 12.74L6.066 21.026h3.26l1.773-3.586 1.773 3.586h3.26l-4.412-8.286c1.876-1.374 3.144-3.586 3.144-6.078 0-4.24-3.48-7.668-7.772-7.668C4.164 0 .736 3.428.736 7.668c0 2.492 1.268 4.704 3.144 6.078l-4.412 8.286h3.26l1.773-3.586 1.773 3.586h3.26l-4.412-8.286zm-.738-9.77c-2.42 0-4.382 1.938-4.382 4.324 0 2.386 1.962 4.324 4.382 4.324 2.42 0 4.382-1.938 4.382-4.324 0-2.386-1.962-4.324-4.382-4.324z"/>
-                  </svg>
-                  Redis
-                </span>
-                <span class="skill-tag skill-express">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 18.588a1.529 1.529 0 01-1.895-.72l-3.45-4.771-.5-.667-4.003 5.444a1.468 1.468 0 01-1.802.708l5.158-6.92-4.798-6.251a1.595 1.595 0 011.9.666l3.576 4.83 3.596-4.81a1.435 1.435 0 011.788-.668L21.708 7.9l-2.522 3.283a.666.666 0 000 .994l4.804 6.412zM.002 11.576l.42-2.075c1.154-4.103 5.858-5.81 9.094-3.27 1.895 1.489 2.368 3.597 2.275 5.973H1.116C.943 16.447 4.009 19.009 7.92 17.7a4.078 4.078 0 002.582-2.876c.207-.666.548-.78 1.174-.588a5.417 5.417 0 01-2.589 3.957 6.272 6.272 0 01-7.306-.933 6.575 6.575 0 01-1.64-3.858c0-.235-.08-.455-.134-.666A88.33 88.33 0 010 11.577zm1.127-.286h9.654c-.06-3.076-2.001-5.258-4.59-5.278-2.882-.04-4.944 2.094-5.071 5.264z"/>
-                  </svg>
-                  Express
-                </span>
-                <span class="skill-tag skill-nestjs">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.006 2.073c-.46 0-.92.007-1.378.02C7.02 2.296 4.087 4.382 2.8 7.356c-.99 2.3-.91 4.87.225 7.117 1.136 2.246 3.166 3.984 5.6 4.84 2.434.858 5.098.808 7.49-.14 2.39-.947 4.267-2.77 5.27-5.135 1.002-2.365 1.044-5.01.114-7.413C19.91 3.446 16.826 1.64 13.35 1.2c-.52-.065-1.048-.106-1.578-.12-.12-.002-.24-.004-.36-.004l-.002-.002h-.002zM9.115 4.018c.312-.02.626-.03.94-.03.192 0 .384.006.575.016 2.3.12 4.46 1.21 5.93 2.97.3.36.56.747.78 1.153.36.664.606 1.388.73 2.137.124.75.126 1.52.008 2.27-.118.75-.358 1.473-.71 2.14-.354.667-.82 1.267-1.38 1.77-1.12 1.003-2.552 1.658-4.07 1.87-1.52.21-3.08.028-4.49-.52-1.41-.547-2.59-1.53-3.39-2.79-.8-1.26-1.19-2.74-1.11-4.24.08-1.5.62-2.95 1.55-4.13C4.215 5.17 6.06 4.19 8.1 3.73c.32-.144.65-.254.99-.338.013-.006.026-.01.04-.014.036-.015.066-.047.01-.047.03.02.06.04.09.06l-.003-.002-.09.05-.01.01-.03.02-.01.01-.04.02-.01.01-.03.02v.01l-.01.01-.05.02h-.01l-.02.02h-.02v.01h-.01z"/>
-                  </svg>
-                  Nest.js
-                </span>
-                <span class="skill-tag skill-graphql">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0L1.698 6v12L12 24l10.302-6V6L12 0zm4.16 15.737h-2.557v-5.39h2.557v5.39zM9.84 13.1h-2.557V7.71h2.557V13.1zm4.32-2.44l1.828-1.947h2.93L14.55 13.1h4.894v2.637H12.16v-5.078h2z"/>
-                  </svg>
-                  GraphQL
-                </span>
-                <span class="skill-tag skill-socketio">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.027 0C6.78 2.307 3.738 7.025 4.172 12.26c.014.17.027.34.04.512a11.63 11.63 0 001.696 5.014 11.83 11.83 0 003.897 3.897 11.63 11.63 0 005.014 1.696c.17.013.34.026.512.04 5.235.434 9.953-2.608 12.26-7.855C29.832 7.667 22.925.366 12.027 0zm-.86 6.185c3.255-.137 6.087 2.253 6.586 5.474.498 3.22-1.592 6.256-4.695 7.117-3.103.862-6.403-.696-7.58-3.647C4.058 12.224 5.356 8.85 8.43 7.824a6.06 6.06 0 012.737-.36v-.28z"/>
-                  </svg>
-                  Socket.io
-                </span>
-                <span class="skill-tag skill-prisma">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M21.8068 18.2848L13.5486 1.25339C13.2537.650711 12.5892.317996 11.922.496916L2.18915 3.31967C1.51973 3.49881 1.04411 4.12499 1.04411 4.82711V4.83917C1.04411 4.87789 1.04664 4.91639 1.05168 4.95444L5.3332 20.1901C5.64749 21.0458 6.53052 21.5773 7.45422 21.4591L14.9886 20.4969C15.1608 20.475 15.3272 20.4318 15.4857 20.3683L20.7866 18.2287C21.3556 17.9996 21.6982 17.4115 21.6245 16.8059C21.5957 16.5689 21.5128 16.3412 21.3826 16.1421L21.8068 18.2848z"/>
-                  </svg>
-                  Prisma
-                </span>
-                <span class="skill-tag skill-websocket">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4.98 3.5C4.98 4.881 3.87 6 2.5 6S.02 4.881.02 3.5C.02 2.12 1.13 1 2.5 1s2.48 1.12 2.48 2.5zM5 8H0v12h5V8zm8.02 0h5v12h-5V8zm7.48-4.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zM17 8h5v12h-5V8z"/>
-                  </svg>
-                  WebSocket
-                </span>
-              </div>
-            </div>
-
-            <div class="skill-category">
-              <h4 class="skill-category-title">DevOps <span class="count">9</span></h4>
-              <div class="skills-grid">
-                <span class="skill-tag skill-aws">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6.755 8.076l-.743-.566a.376.376 0 0 1 .15-.682l.743-.257a.376.376 0 0 1 .475.257l.122.478a.376.376 0 0 1-.747.77zm2.687.524l-.474-.748a.376.376 0 0 1 .28-.578l.796-.054a.376.376 0 0 1 .296.567l-.376.675a.376.376 0 0 1-.522.138zm2.05-1.713l-.026-.802a.376.376 0 0 1 .52-.373l.716.376a.376.376 0 0 1 .125.572l-.548.555a.376.376 0 0 1-.787-.328zm2.215 1.073l.474-.748a.376.376 0 0 1 .676.28v.796a.376.376 0 0 1-.567.296l-.675-.376a.376.376 0 0 1 .092-.248zm1.29-2.017l.743-.566a.376.376 0 0 1 .682.15l.257.743a.376.376 0 0 1-.257.475l-.478.122a.376.376 0 0 1-.475-.257l-.122-.478a.376.376 0 0 1-.35-.189zm4.68 1.673a4.96 4.96 0 0 0-2.06-.217 5.13 5.13 0 0 0-1.736.506 4.77 4.77 0 0 0-1.653 1.362 6.43 6.43 0 0 0-.936-1.505 6.12 6.12 0 0 0-1.326-1.23 6.6 6.6 0 0 0-1.71-.872 7.18 7.18 0 0 0-2.074-.314c-.37 0-.74.03-1.107.094A6.07 6.07 0 0 0 3.32 7.95a6.52 6.52 0 0 0-1.55 1.18 6.8 6.8 0 0 0-1.18 1.55 6.07 6.07 0 0 0-.638 1.587 6.3 6.3 0 0 0-.094 1.107c0 .37.03.74.094 1.107.098.555.254 1.085.47 1.59a6.6 6.6 0 0 0 .873 1.55c.342.442.73.845 1.158 1.2.428.354.895.658 1.392.906.154.077.312.148.47.215-.183.096-.36.204-.533.324-.743.514-1.338 1.192-1.784 1.966A5.15 5.15 0 0 0 1.22 21.7c-.17.656-.26 1.333-.267 2.013 0 .267.013.535.04.8.077.743.24 1.468.49 2.17.222.63.517 1.23.88 1.79.362.558.792 1.067 1.284 1.52a6.88 6.88 0 0 0 3.89 1.97c.37.058.744.09 1.118.093h.04c.68 0 1.36-.09 2.02-.267.57-.155 1.117-.38 1.63-.675.512-.294.99-.654 1.428-1.074.437-.42.83-.885 1.17-1.39.342-.506.62-1.05.83-1.623.21-.573.35-1.17.42-1.78.07-.607.07-1.22-.003-1.827a7.54 7.54 0 0 0-.42-1.78 7.72 7.72 0 0 0-.83-1.623 7.68 7.68 0 0 0-1.17-1.39 7.53 7.53 0 0 0-1.428-1.074 7.23 7.23 0 0 0-1.63-.675 7.1 7.1 0 0 0-2.02-.267h-.04a7.1 7.1 0 0 0-1.118.093 6.88 6.88 0 0 0-3.89 1.97 6.5 6.5 0 0 0-1.284 1.52 7.03 7.03 0 0 0-.88 1.79c-.25.702-.413 1.427-.49 2.17-.027.265-.04.533-.04.8.007.68.097 1.357.267 2.013.152.573.37 1.126.652 1.65.283.524.627 1.012 1.03 1.458a7.5 7.5 0 0 0 3.242 2.17 7.23 7.23 0 0 0 2.04.61c.51.068 1.025.088 1.54.06.513-.028 1.02-.097 1.52-.207a7.53 7.53 0 0 0 1.477-.46 7.5 7.5 0 0 0 1.38-.72c.43-.27.84-.578 1.22-.92a7.69 7.69 0 0 0 1.05-1.12c.31-.4.59-.824.83-1.27.24-.447.44-.915.6-1.398a7.67 7.67 0 0 0 .365-1.5c.08-.505.12-1.017.12-1.53 0-.513-.04-1.025-.12-1.53a7.67 7.67 0 0 0-.365-1.5 7.72 7.72 0 0 0-.6-1.398 7.69 7.69 0 0 0-.83-1.27 7.5 7.5 0 0 0-1.05-1.12 7.53 7.53 0 0 0-1.22-.92 7.5 7.5 0 0 0-1.38-.72 7.23 7.23 0 0 0-1.477-.46 7.1 7.1 0 0 0-1.52-.207c-.515-.028-1.03-.008-1.54.06a7.23 7.23 0 0 0-2.04.61 7.5 7.5 0 0 0-3.242 2.17 7.03 7.03 0 0 0-1.03 1.458c-.283.524-.5 1.077-.652 1.65-.17.656-.26 1.333-.267 2.013z"/>
-                  </svg>
-                  AWS
-                </span>
-                <span class="skill-tag skill-docker">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.186V9.006a.186.186 0 0 0-.186-.186h-2.119a.186.186 0 0 0-.187.186v1.886c0 .103.084.186.187.186zm-2.954-5.43h2.118a.186.186 0 0 0 .187-.185V3.577a.186.186 0 0 0-.187-.186h-2.118a.186.186 0 0 0-.187.186v1.886c0 .102.084.185.187.185zm0 2.716h2.118a.187.187 0 0 0 .187-.186V6.292a.187.187 0 0 0-.187-.186h-2.118a.187.187 0 0 0-.187.186v1.886c0 .103.084.186.187.186zm-2.93 0h2.12a.186.186 0 0 0 .186-.186V6.292a.186.186 0 0 0-.186-.186h-2.12a.186.186 0 0 0-.184.186v1.886c0 .103.083.186.185.186zm-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.292a.186.186 0 0 0-.185-.186H5.136a.186.186 0 0 0-.186.186v1.886c0 .103.084.186.186.186zm5.893 2.715h2.118a.186.186 0 0 0 .186-.186V9.006a.186.186 0 0 0-.186-.186h-2.118a.187.187 0 0 0-.187.186v1.886c0 .103.084.186.187.186zm-2.93 0h2.12a.185.185 0 0 0 .185-.186V9.006a.185.185 0 0 0-.185-.186h-2.12a.185.185 0 0 0-.184.186v1.886c0 .103.083.186.185.186zm-2.964 0h2.119a.186.186 0 0 0 .185-.186V9.006a.186.186 0 0 0-.185-.186H5.136a.186.186 0 0 0-.186.186v1.886c0 .103.084.186.186.186zm-2.92 0h2.12a.185.185 0 0 0 .184-.186V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.186v1.886c0 .103.082.186.184.186zm14.773 0h2.119a.186.186 0 0 0 .187-.186V9.006a.186.186 0 0 0-.187-.186h-2.119a.186.186 0 0 0-.186.186v1.886c0 .103.084.186.186.186zm1.173 2.26c0-.76-.182-1.47-.546-2.12a5.25 5.25 0 0 0-1.49-1.62 6.03 6.03 0 0 0-2.18-1.02 7.1 7.1 0 0 0-2.48-.37c-.86 0-1.68.12-2.48.37a6.03 6.03 0 0 0-2.18 1.02 5.25 5.25 0 0 0-1.49 1.62c-.36.65-.54 1.36-.54 2.12 0 .81.2 1.55.61 2.23a5.52 5.52 0 0 0 1.66 1.73c.7.48 1.51.84 2.41 1.07.9.24 1.84.35 2.83.35.99 0 1.93-.12 2.82-.35.9-.23 1.71-.59 2.42-1.07a5.52 5.52 0 0 0 1.66-1.73c.41-.68.61-1.42.61-2.23zm-3.27 2.46c-.47.48-1.05.85-1.74 1.11-.69.26-1.44.39-2.25.39-.81 0-1.56-.13-2.25-.39-.69-.26-1.27-.63-1.74-1.11a4.09 4.09 0 0 1-1.13-1.75c-.27-.68-.4-1.42-.4-2.21 0-.78.13-1.52.4-2.2.27-.68.65-1.27 1.13-1.76.47-.48 1.05-.86 1.74-1.12.69-.26 1.44-.39 2.25-.39.81 0 1.56.13 2.25.39.69.26 1.27.64 1.74 1.12.47.49.85 1.08 1.13 1.76.27.68.4 1.42.4 2.2 0 .79-.13 1.53-.4 2.21a4.09 4.09 0 0 1-1.13 1.75z"/>
-                  </svg>
-                  Docker
-                </span>
-                <span class="skill-tag skill-kubernetes">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M10.04 19.86c-.43 1.16-1.4 2.08-2.66 2.36l-.49-1.9c.66-.14 1.22-.56 1.53-1.12.31-.56.4-1.21.26-1.83l3.16-4.28 1.4 1.03-3.2 4.74zm5.92 0l-3.2-4.74 1.4-1.03 3.16 4.28a2.6 2.6 0 0 1-.53 3.16c-.48.44-1.08.7-1.71.78l-.49 1.9c1.26-.28 2.23-1.2 2.66-2.36zm-3.46-7.32l-2.2-3.22 1.4-1.03 2.2 3.22-1.4 1.03zm-3.5 1.28l-2.2-3.22 1.4-1.03 2.2 3.22-1.4 1.03zm7 0l-2.2-3.22 1.4-1.03 2.2 3.22-1.4 1.03zM12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 2.4c5.3 0 9.6 4.3 9.6 9.6s-4.3 9.6-9.6 9.6S2.4 17.3 2.4 12 6.7 2.4 12 2.4z"/>
-                  </svg>
-                  Kubernetes
-                </span>
-                <span class="skill-tag skill-cicd">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3.467 5.313c.106.098 4.565 4.876 4.565 4.876L12.4 6.006l-.992-.042L6.33 9.73 3.467 6.757a.667.667 0 0 1 0-.894l-.001-.001a.667.667 0 0 1 .892 0l-.001.001.877.45zM13.406 5.84l-.996.124 4.96 4.13-4.97 4.132.996.124 5.54-4.628a.667.667 0 0 0 0-.98l-5.53-4.922zm-1.998 5.293l.996.123-4.97 4.133 4.964 4.13-.996.125-5.538-4.628a.667.667 0 0 1 0-.98l5.544-4.923z"/>
-                  </svg>
-                  CI/CD
-                </span>
-                <span class="skill-tag skill-linux">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.504 0c-.157 0-.311.005-.465.014C8.937.26 6.045 2.395 4.63 5.445a9.954 9.954 0 0 0-.873 3.162c-.148.987-.177 1.996-.086 3.002.09 1.006.29 1.996.596 2.945.154.474.34.937.556 1.383.432.89.98 1.71 1.63 2.43.324.36.68.69 1.066.984l.043.033-.156-.097a11.273 11.273 0 0 1-1.017-.702c-.765-.579-1.463-1.24-2.082-1.97a11.93 11.93 0 0 1-1.634-2.379 11.51 11.51 0 0 1-1.088-2.756 11.05 11.05 0 0 1-.503-2.932 10.68 10.68 0 0 1 .137-2.993 10.46 10.46 0 0 1 .757-2.76C3.996 3.64 5.28 2.198 6.86 1.155 8.438.11 10.255-.42 12.087.074c.553.15 1.084.35 1.588.598a8.4 8.4 0 0 1 2.725 2.039c.767.928 1.345 1.988 1.72 3.134a8.73 8.73 0 0 1 .475 3.333 8.35 8.35 0 0 1-.327 2.536 8.04 8.04 0 0 1-.908 2.108 7.72 7.72 0 0 1-1.45 1.745c-.553.51-1.16.956-1.81 1.33-.058.033-.117.065-.176.097l-.158.09.312.182c.694.396 1.423.726 2.178.985.755.259 1.534.445 2.328.557a11.9 11.9 0 0 0 4.79-.142c1.537-.342 2.953-1.027 4.165-2.006 1.213-.98 2.187-2.227 2.85-3.653a11.34 11.34 0 0 0 .914-2.16 10.89 10.89 0 0 0 .416-2.325 10.6 10.6 0 0 0-.026-2.468 10.5 10.5 0 0 0-.488-2.366 10.7 10.7 0 0 0-.922-2.166 11.05 11.05 0 0 0-1.324-1.926 11.49 11.49 0 0 0-1.69-1.595 12.03 12.03 0 0 0-2.02-1.2 12.62 12.62 0 0 0-2.31-.748 13.19 13.19 0 0 0-2.558-.26z"/>
-                  </svg>
-                  Linux
-                </span>
-                <span class="skill-tag skill-nginx">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0L1.747 6v12L12 24l10.253-6V6L12 0zm5.693 16.875H6.307V7.125h11.386v9.75z"/>
-                  </svg>
-                  Nginx
-                </span>
-                <span class="skill-tag skill-firebase">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3.89 15.673L6.255.461A.542.542 0 017.27.288l2.543 4.771zm16.794 3.692L18.35 2.318a.542.542 0 00-.95-.292L3.132 19.365l7.83 4.297a1.084 1.084 0 001.077 0l8.644-4.297zM14.95 8.095L12.165 2.88a.542.542 0 00-.952 0L8.42 8.095l6.53 3.278z"/>
-                  </svg>
-                  Firebase
-                </span>
-                <span class="skill-tag skill-vercel">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 22.525H0l12-21.05 12 21.05z"/>
-                  </svg>
-                  Vercel
-                </span>
-                <span class="skill-tag skill-terraform">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8.09 8.87v7.96l6.39 3.69V12.56zm0-7.82v6.77l6.39 3.69V4.74zm7.22 4.14v6.77l6.39-3.69V5.03zm0 7.82v6.77l6.39-3.69v-6.77z"/>
-                  </svg>
-                  Terraform
-                </span>
-              </div>
-            </div>
-
-            <div class="skill-category">
-              <h4 class="skill-category-title">Tools <span class="count">9</span></h4>
-              <div class="skills-grid">
-                <span class="skill-tag skill-git">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.546 10.93L13.067.452a1.55 1.55 0 0 0-2.188 0L8.708 2.627l2.76 2.76a1.838 1.838 0 0 1 2.327 2.341l2.66 2.66a1.838 1.838 0 1 1-1.103 1.04l-2.481-2.481v6.529a1.838 1.838 0 1 1-1.513-.128V8.78a1.838 1.838 0 0 1-.998-2.41L7.636 3.645.45 10.832a1.55 1.55 0 0 0 0 2.188l10.48 10.477a1.55 1.55 0 0 0 2.186 0l10.43-10.38a1.55 1.55 0 0 0 0-2.187z"/>
-                  </svg>
-                  Git
-                </span>
-                <span class="skill-tag skill-figma">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24l-4.588-4.588 1.067-1.067 3.521 3.521 3.521-3.521 1.067 1.067L8.172 24zm8.184-4.588l-1.067 1.067 4.588 4.588-4.588-4.588 1.067-1.067-3.521 3.521-3.521-3.521 1.067 1.067 3.521 3.521-3.521 3.521-1.067-1.067 4.588-4.588-4.588 4.588z"/>
-                  </svg>
-                  Figma
-                </span>
-                <span class="skill-tag skill-jest">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.608 17.657l-2.542-2.542a.875.875 0 0 0-1.238 0l-.16.16a.875.875 0 0 1-1.237 0L9.89 12.734a.875.875 0 0 1 0-1.237l.16-.16a.875.875 0 0 0 0-1.238L7.508 7.557a.875.875 0 0 0-1.238 0l-1.92 1.92a.875.875 0 0 0 0 1.238l3.776 3.776a.875.875 0 0 1 0 1.238l-.16.16a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 0 1.238 0l1.92-1.92a.875.875 0 0 0 0-1.238l-1.92-1.92 2.542-2.542 1.92 1.92a.875.875 0 0 1 0 1.238l-.16.16a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 0 1.238 0l1.92-1.92a.875.875 0 0 0 0-1.238l-1.92-1.92-.001.001a.875.875 0 0 1 0-1.238l.16-.16a.875.875 0 0 0 0-1.238l-2.542-2.542a.875.875 0 0 0-1.238 0l-.16.16a.875.875 0 0 1-1.237 0L9.89 5.01a.875.875 0 0 1 0-1.237l.16-.16a.875.875 0 0 0 0-1.238L7.508.033a.875.875 0 0 0-1.238 0L4.35 1.953a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 1 0 1.238l-.16.16a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 1 0 1.237l-.16.16a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 0 1.238 0l1.92-1.92a.875.875 0 0 0 0-1.238l-1.92-1.92 2.542-2.542 1.92 1.92a.875.875 0 0 1 0 1.238l-.16.16a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 0 1.238 0l1.92-1.92a.875.875 0 0 0 0-1.238l-2.542-2.542a.875.875 0 0 1 0-1.238l.16-.16a.875.875 0 0 0 0-1.238l-2.542-2.542a.875.875 0 0 0-1.238 0l-.16.16a.875.875 0 0 1-1.237 0L9.89 5.01a.875.875 0 0 1 0-1.237l.16-.16a.875.875 0 0 0 0-1.238L7.508.033a.875.875 0 0 0-1.238 0L4.35 1.953a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 1 0 1.238l-.16.16a.875.875 0 0 0 0 1.238l2.542 2.542a.875.875 0 0 1 0 1.237l-.16.16a.875.875 0 0 0 0 1.238z"/>
-                  </svg>
-                  Jest
-                </span>
-                <span class="skill-tag skill-webrtc">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.75 12.687c0-3.053-1.203-5.865-3.153-7.888A10.46 10.46 0 0 0 12.74.75C10.166.75 7.805 1.638 5.92 3.176A10.39 10.39 0 0 0 2.5 8.94a10.39 10.39 0 0 0 3.42 5.764 10.46 10.46 0 0 0 6.82 2.546c2.573 0 4.934-.888 6.82-2.546a10.39 10.39 0 0 0 3.42-5.764c.377-.53.7-1.1.97-1.698v.385zm-11.01 5.483a8.11 8.11 0 0 1-5.308-1.978 8.06 8.06 0 0 1-2.66-4.475 8.06 8.06 0 0 1 2.66-4.475A8.11 8.11 0 0 1 12.74 5.33c2.033 0 3.854.772 5.308 1.978a8.06 8.06 0 0 1 2.66 4.475 8.06 8.06 0 0 1-2.66 4.475 8.11 8.11 0 0 1-5.308 1.978h-.002z"/>
-                  </svg>
-                  WebRTC
-                </span>
-                <span class="skill-tag skill-postman">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.757 7.502l-1.137 1.137a3.007 3.007 0 00-.756-.407l.346-1.484a.25.25 0 00-.317-.298l-1.484.346a3.007 3.007 0 00-.407-.756l1.137-1.137a.25.25 0 00-.354-.354l-1.137 1.137a3.007 3.007 0 00-.756.407l-.346-1.484a.25.25 0 00-.298-.317l-1.484.346a3.007 3.007 0 00-.407.756L8.62 6.252a.25.25 0 00-.354.354l1.137 1.137a3.007 3.007 0 00-.407.756l-1.484-.346a.25.25 0 00-.298.317l.346 1.484a3.007 3.007 0 00-.756.407l-1.137-1.137a.25.25 0 00-.354.354l1.137 1.137a3.007 3.007 0 00.407.756l-1.484.346a.25.25 0 00.317.298l1.484-.346a3.007 3.007 0 00.756.407l-1.137 1.137a.25.25 0 00.354.354l1.137-1.137a3.007 3.007 0 00.756-.407l.346 1.484a.25.25 0 00.298.317l1.484-.346a3.007 3.007 0 00.407-.756l1.137 1.137a.25.25 0 00.354-.354l-1.137-1.137a3.007 3.007 0 00.407-.756l1.484.346a.25.25 0 00.298-.317l-.346-1.484a3.007 3.007 0 00.756-.407l1.137 1.137a.25.25 0 00.354-.354l-1.137-1.137a3.007 3.007 0 00-.407-.756l1.484-.346a.25.25 0 00-.317-.298l-1.484.346a3.007 3.007 0 00-.756-.407l1.137-1.137a.25.25 0 00-.354-.354z"/>
-                  </svg>
-                  Postman
-                </span>
-                <span class="skill-tag skill-burpsuite">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.5 18h-3v-2h3v2zm0-4h-3V7h3v7zm4.5 4h-3v-2h3v2zm0-4h-3V7h3v7z"/>
-                  </svg>
-                  Burp Suite
-                </span>
-                <span class="skill-tag skill-turborepo">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.8a7.2 7.2 0 110 14.4 7.2 7.2 0 010-14.4zm0 2.4a4.8 4.8 0 100 9.6 4.8 4.8 0 000-9.6z"/>
-                  </svg>
-                  Turborepo
-                </span>
-                <span class="skill-tag skill-npm">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.733 23.767h20.534V.5H1.733v23.267zM5.9 20.2H4.2V4.2h1.7v16zm4.267 0H7.8v-4.8h2.433v4.8zm4.266 0h-2.433v-8h2.433v8zm4.267 0h-2.433V7.5h2.433v12.7zm2.567 0h-1.7V4.2h1.7v16z"/>
-                  </svg>
-                  npm
-                </span>
-                <span class="skill-tag skill-vscode">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/>
-                  </svg>
-                  VS Code
-                </span>
-              </div>
-            </div>
-
-            <div class="skill-category">
-              <h4 class="skill-category-title">Languages <span class="count">9</span></h4>
-              <div class="skills-grid">
-                <span class="skill-tag skill-c">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.003 0C5.376 0 0 5.376 0 12.003c0 6.627 5.376 12.003 12.003 12.003 6.627 0 12.003-5.376 12.003-12.003C24.006 5.376 18.63 0 12.003 0zm-.577 17.315c-.248.19-.573.297-.948.297-.667 0-1.222-.386-1.502-.977l-.013.007-1.02 1.768c.473.822 1.385 1.38 2.427 1.38.827 0 1.573-.357 2.08-.928l-.023.021zm6.213-2.037c-.157.396-.473.712-.87.868l.008-.003c-.396.157-.828.18-1.243.063l.043.008c-.415-.116-.778-.34-1.053-.647l-.004-.005c-.275-.308-.457-.69-.515-1.115l-.002-.015a2.05 2.05 0 01.063-1.243l.008.022c.156-.415.473-.778.87-1.053l-.008.005c.396-.275.86-.457 1.358-.515l.015-.002c.425-.058.868-.035 1.283.063l-.043-.008c.415.098.79.296 1.095.57l.005.004c.304.275.534.628.665 1.03l.005.018c.131.402.158.854.078 1.268l.004-.048a2.1 2.1 0 01-.57 1.095l-.004.005c-.275.304-.628.534-1.03.665l-.018.005c-.396.131-.848.158-1.263.078l.048.004c-.396-.098-.77-.296-1.075-.57l-.005-.004c-.304-.275-.534-.628-.665-1.03l-.005-.018c-.131-.402-.158-.854-.078-1.268l-.004.048c.098-.396.296-.77.57-1.075l.004-.005c.275-.304.628-.534 1.03-.665l.018-.005c.402-.131.854-.158 1.268-.078l-.048-.004c.396.098.77.296 1.075.57l.005.004c.304.275.534.628.665 1.03l.005.018c.131.402.158.854.078 1.268l-.004-.048z"/>
-                  </svg>
-                  C
-                </span>
-                <span class="skill-tag skill-cpp">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.98 11.82c-.013.1-.033.198-.062.293a1.24 1.24 0 01-.088.224c-.03.058-.064.113-.102.165a1.22 1.22 0 01-.346.288c-.03.017-.063.03-.096.043a1.23 1.23 0 01-.205.063l-.028.005-9.14 3.36a1.26 1.26 0 01-.467.087 1.24 1.24 0 01-.466-.087l-9.14-3.36-.028-.005a1.23 1.23 0 01-.205-.063 1.21 1.21 0 01-.096-.043 1.22 1.22 0 01-.346-.288 1.24 1.24 0 01-.102-.165 1.24 1.24 0 01-.088-.224 1.24 1.24 0 01-.062-.293 1.24 1.24 0 01-.013-.1v-3.64c0-.033.002-.066.005-.1.004-.032.01-.064.017-.095.013-.066.033-.13.058-.19a1.24 1.24 0 01.143-.23c.026-.033.055-.063.086-.092.032-.028.066-.053.102-.076.036-.022.074-.04.114-.056l.02-.008 9.14-3.36a1.23 1.23 0 01.467-.088c.166 0 .324.03.467.088l9.14 3.36.02.008c.04.015.078.034.114.056.036.023.07.048.102.076.031.029.06.059.086.092.049.076.099.15.143.23.025.06.045.124.058.19.007.031.013.063.017.095.003.034.005.067.005.1v3.64c0 .033-.002.066-.006.098zm-6.48-1.16a4.33 4.33 0 00-4.32-4.32 4.33 4.33 0 00-4.32 4.32 4.33 4.33 0 004.32 4.32 4.33 4.33 0 004.32-4.32zm-4.32-2.58v1.66h-1.66v1.84h1.66v1.66h1.84v-1.66h1.66v-1.84h-1.66v-1.66h-1.84zm4.32 0v1.66h-1.66v1.84h1.66v1.66h1.84v-1.66h1.66v-1.84h-1.66v-1.66h-1.84z"/>
-                  </svg>
-                  C++
-                </span>
-                <span class="skill-tag skill-python">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09-.33.22zM21.1 6.11l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08-.33.23z"/>
-                  </svg>
-                  Python
-                </span>
-                <span class="skill-tag skill-javascript">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
-                  </svg>
-                  JavaScript
-                </span>
-                <span class="skill-tag skill-typescript">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.394c.272.118.575.236.908.352.332.116.663.243.993.382.33.138.648.303.952.495.304.191.562.414.771.668.209.253.366.547.47.88.104.332.156.714.156 1.145 0 .636-.117 1.195-.35 1.678-.235.483-.56.89-.976 1.223-.417.333-.897.588-1.442.767-.546.179-1.117.268-1.713.268-.596 0-1.165-.09-1.71-.27a4.585 4.585 0 0 1-1.428-.772 5.144 5.144 0 0 1-.966-1.24l2.232-1.396c.132.26.318.484.558.67.24.187.504.338.79.453.287.115.578.172.875.172.313 0 .596-.036.85-.108a1.95 1.95 0 0 0 .62-.297c.172-.133.3-.3.393-.5a1.09 1.09 0 0 0 .139-.59c0-.225-.064-.42-.192-.588-.128-.167-.312-.318-.55-.453-.237-.135-.525-.265-.863-.392-.338-.128-.694-.263-1.068-.406-.373-.143-.74-.309-1.1-.499a4.496 4.496 0 0 1-.932-.66 3.22 3.22 0 0 1-.656-.848 2.89 2.89 0 0 1-.39-.96c-.089-.34-.133-.707-.133-1.101 0-.59.122-1.124.365-1.602.243-.478.58-.883 1.009-1.214.429-.332.918-.588 1.466-.767.549-.18 1.115-.27 1.699-.27zm-5.368 5.898v6.72h-2.428v-6.72H7.242V7.36h7.275v2.248h-2.428z"/>
-                  </svg>
-                  TypeScript
-                </span>
-                <span class="skill-tag skill-solidity">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8.216 10.52l2.093-3.485.227-.379h3.03l-.036.06-2.13 3.548h-.64l-2.129-3.548-.036-.061.42-.001 2.128 3.549-.659 1.098-2.129-3.55-.037-.061h-.592l-.036.06L8.216 10.52zm2.326-1.098h.996l.499-1.328-.036-.06-.499.83-.254-.424-.254-.424-.498.83-.037.06.498.516z"/>
-                  </svg>
-                  Solidity
-                </span>
-                <span class="skill-tag skill-rust">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.003 0C5.376 0 .003 5.373.003 12c0 6.627 5.373 12 12 12 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12zm0 2.16c5.436 0 9.84 4.404 9.84 9.84s-4.404 9.84-9.84 9.84-9.84-4.404-9.84-9.84S6.567 2.16 12.003 2.16zm-.54 3.36v2.4h1.08v-2.4h3.6v1.08h-2.52v1.32h2.52v1.08h-2.52v1.32h2.52v1.08h-3.6v-2.4h-1.08v2.4h-3.6v-1.08h2.52v-1.32h-2.52v-1.08h2.52V7.68H7.864V6.6h3.602z"/>
-                  </svg>
-                  Rust
-                </span>
-                <span class="skill-tag skill-go">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M1.818 0C.814 0 0 .814 0 1.818v20.364C0 23.186.814 24 1.818 24h20.364c1.004 0 1.818-.814 1.818-1.818V1.818C24 .814 23.186 0 22.182 0zm8.878 13.177c-1.556.112-3.024-.953-3.375-2.46-.34-1.465.515-2.99 1.958-3.55 1.554-.603 3.364-.07 4.24 1.26.076.116.144.24.204.37.198-.065.4-.117.606-.157.043-.008.087-.014.13-.02-.018-.132-.047-.26-.085-.384-.503-1.605.27-3.36 1.748-4.2 1.612-.913 3.667-.446 4.82 1.06.016.02.03.04.044.062-.045-.002-.09-.002-.136 0-.804.025-1.57.243-2.254.627-.683-.89-1.72-1.467-2.89-1.467-1.31 0-2.508.74-3.118 1.89-.608 1.148-.462 2.528.373 3.526.835.998 2.16 1.464 3.398 1.208 1.238-.256 2.218-1.18 2.55-2.39.332-1.21-.01-2.505-.908-3.4-.054-.054-.112-.104-.173-.15.02.06.038.122.054.184.32 1.218-.062 2.525-.955 3.418-.894.893-2.193 1.295-3.41.974-1.217-.32-2.138-1.24-2.46-2.458z"/>
-                  </svg>
-                  Go
-                </span>
-                <span class="skill-tag skill-java">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8.851 18.56s-.917.534.653.714c1.902.218 2.874.187 4.969-.211 0 0 .552.346 1.321.646-4.699 2.013-10.633-.118-6.943-1.149M8.276 15.933s-1.028.762.542.924c2.032.209 3.636.227 6.413-.308 0 0 .384.389.987.602-5.679 1.661-12.007.13-7.942-1.218M13.116 11.475c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688 0-.001-8.216 2.051-4.292 6.573M19.33 20.504s.679.559-.747.991c-2.712.822-11.288 1.069-13.669.033-.856-.373.75-.89 1.254-.998.527-.114.828-.093.828-.093-.953-.671-6.156 1.317-2.643 1.887 9.58 1.553 17.462-.7 14.977-1.82M9.292 13.21s-4.362 1.036-1.544 1.412c1.189.159 3.561.123 5.77-.062 1.806-.152 3.618-.477 3.618-.477s-.637.272-1.098.587c-4.429 1.165-12.986.623-10.522-.568 2.082-1.006 3.776-.892 3.776-.892M17.116 17.584c4.503-2.34 2.421-4.589.968-4.285-.355.074-.515.138-.515.138s.132-.207.385-.297c2.875-1.011 5.086 2.981-.928 4.562 0-.001.07-.062.09-.118M14.401 0s2.494 2.494-2.365 6.33c-3.896 3.077-.888 4.832-.001 6.836-2.274-2.053-3.943-3.858-2.824-5.539 1.644-2.469 6.197-3.665 5.19-7.627"/>
-                  </svg>
-                  Java
-                </span>
-              </div>
+          <div class="terminal-container">
+            <div class="terminal-output" id="terminal-output">Welcome to the Skills Terminal.
+Type 'help' to see available commands.
+</div>
+            <div class="terminal-input-line">
+              <span class="terminal-prompt">abhinav@portfolio:~$</span>
+              <input type="text" class="terminal-input" id="terminal-input" spellcheck="false" autocomplete="off">
             </div>
           </div>
         </div>
@@ -1382,6 +980,13 @@
           content.classList.remove('active');
         });
         document.getElementById(tabId).classList.add('active');
+
+        // Focus terminal input if skills tab is selected
+        if (tabId === 'skills') {
+          setTimeout(() => {
+            document.getElementById('terminal-input').focus();
+          }, 100);
+        }
       });
     });
 
@@ -1403,6 +1008,91 @@
         tabs[newIndex].click();
         tabs[newIndex].focus();
       }
+    });
+
+    // Skills Terminal Logic
+    const skillsData = {
+      frontend: ["React", "Next.js", "Vue.js", "TypeScript", "JavaScript", "Tailwind", "Redux", "HTML", "CSS", "Sass", "Svelte", "Vite"],
+      backend: ["Node.js", "Python", "FastAPI", "PostgreSQL", "MongoDB", "Redis", "Express", "Nest.js", "GraphQL", "Socket.io", "Prisma", "WebSocket"],
+      devops: ["AWS", "Docker", "Kubernetes", "CI/CD", "Linux", "Nginx", "Firebase", "Vercel", "Terraform"],
+      tools: ["Git", "Figma", "Jest", "WebRTC", "Postman", "Burp Suite", "Turborepo", "npm", "VS Code"],
+      languages: ["C", "C++", "Python", "JavaScript", "TypeScript", "Solidity", "Rust", "Go", "Java"]
+    };
+
+    const terminalInput = document.getElementById('terminal-input');
+    const terminalOutput = document.getElementById('terminal-output');
+
+    terminalInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const command = this.value.trim().toLowerCase();
+        const fullCommand = this.value.trim();
+        this.value = '';
+
+        // Add command to output
+        terminalOutput.innerHTML += `<div class="terminal-command-line"><span class="terminal-prompt">abhinav@portfolio:~$</span> ${fullCommand}</div>`;
+
+        processCommand(command);
+        
+        // Scroll to bottom
+        const container = document.querySelector('.terminal-container');
+        container.scrollTop = container.scrollHeight;
+      }
+    });
+
+    function processCommand(cmd) {
+      const args = cmd.split(' ');
+      const mainCmd = args[0];
+
+      if (mainCmd === 'help') {
+        terminalOutput.innerHTML += `<div class="terminal-command-result terminal-help">
+Available commands:
+  help              - Show this help message
+  list              - List all skill categories
+  skill [category]  - List skills in a specific category
+  clear             - Clear the terminal
+  whoami            - Display user information
+</div>`;
+      } else if (mainCmd === 'clear') {
+        terminalOutput.innerHTML = '';
+      } else if (mainCmd === 'list') {
+        const categories = Object.keys(skillsData).join(', ');
+        terminalOutput.innerHTML += `<div class="terminal-command-result">Available categories: ${categories}</div>`;
+      } else if (mainCmd === 'skill') {
+        const category = args[1];
+        if (category && skillsData[category]) {
+          const skills = skillsData[category].map(s => `<span class="skill-list-item">${s}</span>`).join('');
+          terminalOutput.innerHTML += `<div class="terminal-command-result"><span class="terminal-category">${category.toUpperCase()}</span>${skills}</div>`;
+        } else {
+          terminalOutput.innerHTML += `<div class="terminal-command-result terminal-error">Error: Category not found. Type 'list' to see available categories.</div>`;
+        }
+      } else if (mainCmd === 'whoami') {
+        terminalOutput.innerHTML += `<div class="terminal-command-result">Abhinav Gautam - Software Engineer and Cybersecurity Enthusiast.</div>`;
+      } else if (mainCmd === '') {
+        // Do nothing
+      } else {
+        terminalOutput.innerHTML += `<div class="terminal-command-result terminal-error">Command not found: ${mainCmd}. Type 'help' for assistance.</div>`;
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const splashScreen = document.querySelector('.splash-screen');
+      const typedName = document.querySelector('#typed-name');
+      const fadeInTitle = document.querySelector('#fade-in-title');
+
+      var typed = new Typed(typedName, {
+        strings: ["Abhinav Gautam"],
+        typeSpeed: 50,
+        onComplete: function() {
+          fadeInTitle.style.opacity = 1;
+          setTimeout(() => {
+            splashScreen.classList.add('hidden');
+            // Remove overflow hidden from body to allow scrolling if needed
+            document.body.style.overflow = 'auto';
+          }, 1000); // Wait for fade-in to complete
+        }
+      });
     });
   </script>
 </body>
